@@ -1,0 +1,15 @@
+Flask
+Flask-RESTful
+Flask-SQLAlchemy
+SQLAlchemy==1.3.18
+flask-marshmallow
+flask-login
+marshmallow-sqlalchemy
+opencv-python
+pyzbar
+flask-cors
+cryptography
+qrcode
+pyotp
+smime
+pycryptodome
