@@ -14,6 +14,6 @@ pip3 install pyotp
 pip3 install smime
 pip3 install pycryptodome
 
-Compte admin =
+Compte admin :
 email = mmaa@cy-tech.fr
 password = admin
