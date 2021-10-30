@@ -1,4 +1,4 @@
-# Projet_crypto
+# FlaskProject-Cryptography
 pip3 install flask_marshmallow
 pip3 install flask-cors
 pip3 install flask-login
