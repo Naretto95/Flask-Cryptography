@@ -1,6 +1,6 @@
 # FlaskProject-Cryptography
 Cryptography project made in Flask python.
 
-Compte admin :
+admin credentials :
 email = mmaa@cy-tech.fr
 password = admin
