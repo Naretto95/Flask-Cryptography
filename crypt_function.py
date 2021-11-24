@@ -30,8 +30,6 @@ def verifie(encrypt_message):
         private_keys = RSA.importKey(f.read(),passphrase="keepbreathing")
     return decrypt_public_key(encrypt_message,private_keys)
     
-    
-
 def decrypt_public_key(encoded_encrypted_msg, public_key):
     encryptor = PKCS1_OAEP.new(public_key)
     decoded_encrypted_msg = base64.b64decode(encoded_encrypted_msg)
@@ -43,7 +41,6 @@ def sign(token):
         public_key = RSA.importKey(certif.read())
     return encrypt_private_key(token,public_key)
     
-
 def generate_qrcode(secret_data, path,id_diploma):
     token = sign(secret_data)
     qr = qrcode.QRCode(
@@ -62,9 +59,6 @@ def generate_qrcode(secret_data, path,id_diploma):
     qr_pos = (diploma.size[0]-360,diploma.size[1]-360)
     diploma.paste(img_qr,qr_pos)
     diploma.save("Diplomas/diploma_"+str(id_diploma)+'.png')
-
-
-    
 
 def generate_unique_diploma(user,diploma):
     """print Name, diploma and years on diploma and make some steganography to 
@@ -104,7 +98,6 @@ def generate_unique_diploma(user,diploma):
     os.remove('qr_temp.png')
     print('cleaning done')
 
-
 def decrypt_img(filename):
     diploma   = Image.open(filename)
     qr = pyzbar.decode(diploma)
@@ -122,7 +115,6 @@ def timeStamp(filename):
     signer_info = signer_infos[0]
     signed_attrs = signer_info['signed_attrs']
     signature = signer_info['signature']
-    print(signed_attrs)
-    
+    print(signed_attrs)  
     return str(signature)
 
