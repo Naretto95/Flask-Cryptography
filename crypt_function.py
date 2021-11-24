@@ -67,7 +67,7 @@ def generate_qrcode(secret_data, path,id_diploma):
     
 
 def generate_unique_diploma(user,diploma):
-    """print Name, diploma and years on diploma and make some stenography to 
+    """print Name, diploma and years on diploma and make some steganography to 
     transform standard picture to a unique one"""
     copyfile("assets/empty_diploma.png","temp.png")
     img = Image.open('temp.png')
