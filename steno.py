@@ -32,7 +32,6 @@ def cacher(image,message):
 			posy_pixel += 1
 		assert(posy_pixel < dimY)
 	
-
 def recuperer(image,taille):
 	message = ""
 	dimX,dimY = image.size
