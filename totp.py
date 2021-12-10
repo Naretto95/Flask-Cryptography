@@ -38,7 +38,7 @@ def verifyotp(token):
     return otp.verify(token)
 
 def maildiploma(diploma,to):
-    #La partie commenté correspond à l'envoie en format smime, cependant le destinataire doit possédé la signature, sinon le mail est illisilbe
+    #La partie commenté correspond à l'envoie en format smime, cependant le destinataire doit possédé la signature, sinon le mail est illisible
     with open(diploma, 'rb') as f:
         img_data = f.read()
     message = MIMEMultipart()
