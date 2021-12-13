@@ -1,11 +1,10 @@
 from flask import Flask
+import os
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_login import login_user,LoginManager
 from flask_cors import CORS
-import hashlib
-import crypt_function as cf
 app = Flask(__name__)
 cors = CORS(app,resources={
   r'/*': {
@@ -24,7 +23,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-db =SQLAlchemy(app)
+db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 @login_manager.user_loader

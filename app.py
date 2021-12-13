@@ -3,11 +3,10 @@ from flask import  render_template,request,session
 from flask_login import login_required, current_user, logout_user
 from werkzeug.utils import redirect
 from flask import send_file
-import base64
 from werkzeug.utils import secure_filename
-from crypt_function import decrypt_img, generate_unique_diploma,verifie
+from src.crypt_function import decrypt_img, generate_unique_diploma,verifie
 from manager import *
-from totp import sendMail,verifyotp,maildiploma
+from src.totp import sendMail,verifyotp,maildiploma
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
