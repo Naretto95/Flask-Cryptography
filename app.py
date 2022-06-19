@@ -37,7 +37,7 @@ def logout():
 def login():
     login=True
     if current_user.is_authenticated:
-        return render_template('/')
+        return redirect('/')
     elif request.method == 'POST':
         mail = request.form['email']
         password = request.form['password']
@@ -55,7 +55,7 @@ def login():
 def register():
     register=True
     if current_user.is_authenticated:
-        return render_template('/')
+        return redirect('/')
     elif request.method == 'POST':      
         if check_user(request.form['email']):
             user = {}
