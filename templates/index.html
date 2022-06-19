@@ -13,12 +13,14 @@
 <div>
     <h1>Check Certificate</h1>
     <hr>
+    <br>
     <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-                <label >Certificate:</label>
-                <input type="file" class="form-control" id="file"  name="file">
+        <div class="form-group container p-3 my-3 border">
+            <label >Certificate:</label>
+            <input type="file" class="form-control" id="file"  name="file">
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 {% endblock %}

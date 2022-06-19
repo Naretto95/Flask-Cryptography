@@ -11,8 +11,6 @@ from pyzbar import pyzbar
 import time
 from asn1crypto import tsp
 
-path_parent = os.path.dirname(os.getcwd())
-
 def encrypt_private_key(a_message, private_key):
     encryptor = PKCS1_OAEP.new(private_key)
     encrypted_msg = encryptor.encrypt(a_message.encode())
@@ -20,7 +18,7 @@ def encrypt_private_key(a_message, private_key):
     return encoded_encrypted_msg
 
 def verifie(encrypt_message):
-    with open(os.getcwd()+os.path.sep+'private'+os.path.sep+'key.pem','r') as f :
+    with open(os.getcwd()+os.path.sep+'ressources'+os.path.sep+'private'+os.path.sep+'key.pem','r') as f :
         private_keys = RSA.importKey(f.read(),passphrase="keepbreathing")
     return decrypt_public_key(encrypt_message,private_keys)
     
@@ -31,7 +29,7 @@ def decrypt_public_key(encoded_encrypted_msg, public_key):
     return decoded_decrypted_msg
 
 def sign(token):   
-    with open(os.getcwd()+os.path.sep+"cert"+os.path.sep+"cert.pem","r") as certif:
+    with open(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"cert"+os.path.sep+"cert.pem","r") as certif:
         public_key = RSA.importKey(certif.read())
     return encrypt_private_key(token,public_key)
     
@@ -52,12 +50,12 @@ def generate_qrcode(secret_data, path,id_diploma):
     img_qr.thumbnail((350,350))
     qr_pos = (diploma.size[0]-360,diploma.size[1]-360)
     diploma.paste(img_qr,qr_pos)
-    diploma.save(os.getcwd()+os.path.sep+"Diplomas"+os.path.sep+"diploma_"+str(id_diploma)+'.png')
+    diploma.save(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"Diplomas"+os.path.sep+"diploma_"+str(id_diploma)+'.png')
 
 def generate_unique_diploma(user,diploma):
     """print Name, diploma and years on diploma and make some steganography to 
     transform standard picture to a unique one"""
-    copyfile(os.getcwd()+os.path.sep+"assets"+os.path.sep+"empty_diploma.png","temp.png")
+    copyfile(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"assets"+os.path.sep+"empty_diploma.png","temp.png")
     img = Image.open('temp.png')
     ts = str(time.time())
     #ts = timeStamp('temp.png')
@@ -70,7 +68,7 @@ def generate_unique_diploma(user,diploma):
             secret_data+='.'
     empty_dip =  Image.open("temp.png")
     d = ImageDraw.Draw(empty_dip)
-    fnt = ImageFont.truetype(os.getcwd()+os.path.sep+'assets'+os.path.sep+'AlgerianRegular.ttf', 50)
+    fnt = ImageFont.truetype(os.getcwd()+os.path.sep+'ressources'+os.path.sep+'assets'+os.path.sep+'AlgerianRegular.ttf', 50)
     pos_user = ((empty_dip.size[0]//2-200,empty_dip.size[1]//2-100))
     pos_diploma=((empty_dip.size[0]//2-200,empty_dip.size[1]//2-50))
     pos_years = ((empty_dip.size[0]//2-100,empty_dip.size[1]//2))
@@ -80,17 +78,14 @@ def generate_unique_diploma(user,diploma):
     d.text(pos_diploma,diploma_draw,fill=(0,0,0),font=fnt)
     d.text(pos_years,str(diploma.graduation_years),fill=(0,0,0),font=fnt)
     empty_dip.save("ready_to_qr.png")
-    print('drawing done')
     generate_qrcode(secret_data,'ready_to_qr.png',diploma._id)
-    img=Image.open(os.getcwd()+os.path.sep+"Diplomas"+os.path.sep+"diploma_"+str(diploma._id)+'.png')
+    img=Image.open(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"Diplomas"+os.path.sep+"diploma_"+str(diploma._id)+'.png')
     cacher(img,secret_data)
-    img.save("Diplomas"+os.path.sep+"diploma_"+str(diploma._id)+'.png')
-    print('diploma_generated')
+    img.save(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"Diplomas"+os.path.sep+"diploma_"+str(diploma._id)+'.png')
     #cleaning temp file 
     os.remove("temp.png")
     os.remove("ready_to_qr.png")
     os.remove('qr_temp.png')
-    print('cleaning done')
 
 def decrypt_img(filename):
     diploma   = Image.open(filename)
@@ -109,6 +104,5 @@ def timeStamp(filename):
     signer_info = signer_infos[0]
     signed_attrs = signer_info['signed_attrs']
     signature = signer_info['signature']
-    print(signed_attrs)  
     return str(signature)
 

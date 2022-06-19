@@ -10,7 +10,6 @@ from src.totp import sendMail,verifyotp,maildiploma
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-
 @app.route("/", methods=['GET', 'POST'])
 def home():
     home=True
@@ -24,7 +23,7 @@ def home():
             os.remove(os.path.join(basedir, app.config['UPLOAD_FOLDER'],name))
             return render_template('Index.html',home=home,success=success)
         except :
-            return render_template('Index.html',home=home,warning = "File not found !")
+            return render_template('Index.html',home=home,warning = "File not found / Wrong type of file !")
     return render_template('Index.html',home=home)
 
 @app.route('/logout')
@@ -153,7 +152,6 @@ def otp(mail):
     if mail==current_user.mail and current_user.admin:
         sendMail(mail)
         return "OTP Sent !"
-
 
 if __name__ == '__main__' :
     db.create_all()

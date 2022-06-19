@@ -11,13 +11,13 @@ import qrcode
 def sendMail(to:string):
     otp=pyotp.TOTP('base32secret3232').provisioning_uri(name='admin@cytech.eu', issuer_name='CY Diploma')
     qr = qrcode.make(otp)
-    qr.save(".."+os.path.sep+"assets"+os.path.sep+"qrcode.png")
+    qr.save(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"assets"+os.path.sep+"qrcode.png")
     otp=pyotp.TOTP('base32secret3232')
     msg = MIMEMultipart()
     msg['From'] = 'cyu.otpdiploma@gmail.com'
     msg['To'] = to
     msg['Subject'] = 'Your OTP QRCODE'
-    with open(".."+os.path.sep+"assets"+os.path.sep+"qrcode.png", 'rb') as f:
+    with open(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"assets"+os.path.sep+"qrcode.png", 'rb') as f:
         img_data = f.read()
     image = MIMEImage(img_data, name="OTP.png")
     msg.attach(image)
