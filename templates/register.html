@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<br>
-<h1>Register</h1>
-<hr>
 {% if warning %}
 <div class="alert alert-warning" role="alert">
   {{warning}}
@@ -13,6 +10,8 @@
   {{success}}
 </div>
 {% endif %}
+<h1>Register</h1>
+<hr>
 <form action="/register" method="POST">
     <div class="form-group">
       <label >First name:</label>

@@ -1,10 +1,10 @@
 from flask import Flask
-import os
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_login import login_user,LoginManager
 from flask_cors import CORS
+
 app = Flask(__name__)
 cors = CORS(app,resources={
   r'/*': {
@@ -114,6 +114,7 @@ def check_user(mail):
         return False 
     else:
         return True
+
 def check_admin(mail):
     usr = User.query.filter_by(mail = mail).first()
     return usr.admin 
@@ -132,7 +133,6 @@ def make_diploma(diploma_id):
         diploma = Diploma.query.filter_by( _id= diploma_id).first()
         user = User.query.filter_by(_id_user = diploma._user_id)
         data+=user.first_name+","+user.name+","+user.school+","+diploma.specialisation+","+diploma.graduation_years
-        
     except:
         print("This diploma is not registered")
     

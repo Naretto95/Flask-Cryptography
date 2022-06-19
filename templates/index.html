@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<br>
 {% if warning %}
 <div class="alert alert-warning" role="alert">
   {{warning}}
@@ -12,10 +11,6 @@
 </div>
 {% endif %}
 <div>
-    {% if current_user.is_authenticated %}
-    <h1>Hi {{ current_user.name }}!</h1>
-    {% endif %}
-    <br>
     <h1>Check Certificate</h1>
     <hr>
     <form method="POST" enctype="multipart/form-data">
