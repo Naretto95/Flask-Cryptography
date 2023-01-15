@@ -7,14 +7,10 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-cors = CORS(app,resources={
-  r'/*': {
-    "origins":"*"
-  }
-  })
+cors = CORS(app, resources={r'/*': {"origins":"*"}})
 
-SEND_FOLDER = 'ressources'+os.path.sep+'Diplomas'
-UPLOAD_FOLDER = 'ressources'+os.path.sep+'DL_Diplomas'
+SEND_FOLDER = os.path.join('ressources', 'Diplomas')
+UPLOAD_FOLDER = os.path.join('ressources', 'DL_Diplomas')
 app.config['SEND_FOLDER'] = SEND_FOLDER
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_db.db'
@@ -28,20 +24,20 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 @login_manager.user_loader
-def load_user(user):
-    return User.query.get(user)
+def load_user(user_id):
+    return User.query.get(user_id)
 
 class User(UserMixin,db.Model):
-    __tablename__ = 'user'
-    id = db.Column('id',db.Integer,primary_key = True)
-    name = db.Column('name',db.String(50))
-    first_name = db.Column('first_name',db.String(50))
-    password =db.Column('password',db.String(255))
-    mail = db.Column('mail',db.String(255))
-    admin = db.Column('admin',db.Integer)
-    school = db.Column("school",db.String(255))
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    first_name = db.Column(db.String(50))
+    password = db.Column(db.String(255))
+    mail = db.Column(db.String(255))
+    admin = db.Column(db.Integer)
+    school = db.Column(db.String(255))
 
-    def __init__(self,name,first_name,password,mail,school,admin):
+    def __init__(self, name, first_name, password, mail, school, admin):
         self.name = name
         self.first_name = first_name
         self.password = password
@@ -49,87 +45,80 @@ class User(UserMixin,db.Model):
         self.admin = admin
         self.school = school
 
-class Diploma(db.Model) :
-    __tablename__ = 'diploma'
-    _id = db.Column('id',db.Integer,primary_key = True)
-    _id_user = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user_link = db.relationship("User")
-    graduation_years = db.Column("graduation_years",db.String(8))
-    specialisation =db.Column("specialisation",db.String(255))
-    status = db.Column('status',db.Integer)# 0 : validé 1:refusé 2: en attente
-    hash =db.Column('hash',db.String(255))
+class Diploma(db.Model):
+    __tablename__ = 'diplomas'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User")
+    graduation_year = db.Column(db.String(8))
+    specialization = db.Column(db.String(255))
+    status = db.Column(db.Integer)  # 0: validated, 1: rejected, 2: pending
+    hash = db.Column(db.String(255))
 
-    def __init__(self,_id_user,graduation_years,specialisation,status): 
-        self._id_user = _id_user
-        self.graduation_years = graduation_years
-        self.specialisation = specialisation
+    def __init__(self, user_id, graduation_year, specialization, status):
+        self.user_id = user_id
+        self.graduation_year = graduation_year
+        self.specialization = specialization
         self.status = status
 
-    def set_hash(self,hash):
-        self.hash = hash
+    def set_hash(self, hash_value):
+        self.hash = hash_value
 
     def get_hash(self):
         return self.hash
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id','name','first_name','password','mail','admin','school')
+        fields = ('id', 'name', 'first_name', 'password', 'email', 'is_admin', 'school')
 
-class DiplomaSchema(ma.Schema) : 
+class DiplomaSchema(ma.Schema):
     class Meta:
-        fields =('id','_id_user','graduation_years','specialisation','status')
+        fields = ('id', 'user_id', 'graduation_year', 'specialization', 'status')
 
-def save_user(user):    
-    new_user = User(user['name'],user["first_name"],user['password'],user['email'],user['school'],False)  
+def save_user(user):
+    new_user = User(user['name'],user["first_name"],user['password'],user['email'],user['school'],False)
     db.session.add(new_user)
     db.session.commit()
 
 def all_diplomas():
-     return Diploma.query.all()
+    return Diploma.query.all()
 
 def save_diploma(diploma):
-    new_diploma=Diploma(diploma['id_user'],diploma['graduation_years'],diploma['specialisation'],diploma['status'])
+    new_diploma = Diploma(diploma['id_user'],diploma['graduation_years'],diploma['specialisation'],diploma['status'])
     db.session.add(new_diploma)
     db.session.commit()
 
-def search_user(id_user) : 
-    return User.query.filter_by(id = id_user).first()
+def search_user(id_user):
+    return User.query.filter_by(id=id_user).first()
 
-def checksum(mail, password) :
-    user = User.query.filter_by(mail = mail).first() 
-    if user != None : 
-        if password == user.password : 
+def checksum(mail, password):
+    user = User.query.filter_by(mail=mail).first()
+    if user:
+        if password == user.password:
             login_user(user)
-            return (True,user.id)
-        else : 
-            return (False,0)
-    else :
-        return (False,0)
+            return (True, user.id)
+        else:
+            return (False, 0)
+    else:
+        return (False, 0)
 
 def check_user(mail):
-    if User.query.filter_by(mail = mail).first() :
-        return False 
-    else:
-        return True
+    return not bool(User.query.filter_by(mail=mail).first())
 
 def check_admin(mail):
-    usr = User.query.filter_by(mail = mail).first()
-    return usr.admin 
+    return User.query.filter_by(mail=mail, admin=True).first() is not None
 
 def user_diploma(user_id):
-    diplomas = []
-    query_di = Diploma.query.filter_by(_id_user = user_id)
-    for elem in query_di:
-        diplomas.append(elem)
-    return diplomas
+    return Diploma.query.filter_by(user_id=user_id).all()
 
 def make_diploma(diploma_id):
-    data = ''
-    try :
-        diploma = Diploma.query.filter_by( _id= diploma_id).first()
-        user = User.query.filter_by(_id_user = diploma._user_id)
-        data+=user.first_name+","+user.name+","+user.school+","+diploma.specialisation+","+diploma.graduation_years
-    except:
+    diploma = Diploma.query.filter_by(id=diploma_id).first()
+    if not diploma:
         print("This diploma is not registered")
+        return
+    
+    user = User.query.filter_by(id=diploma.user_id).first()
+    data = f"{user.first_name},{user.name},{user.school},{diploma.specialisation},{diploma.graduation_years}"
+    return data
     
     
