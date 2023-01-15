@@ -3,21 +3,19 @@ import os
 import string
 import smtplib
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
-import smime
 import qrcode
 
 def sendMail(to:string):
-    otp=pyotp.TOTP('base32secret3232').provisioning_uri(name='admin@cytech.eu', issuer_name='CY Diploma')
+    otp = pyotp.TOTP('base32secret3232').provisioning_uri(name='admin@cytech.eu', issuer_name='CY Diploma')
     qr = qrcode.make(otp)
-    qr.save(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"assets"+os.path.sep+"qrcode.png")
-    otp=pyotp.TOTP('base32secret3232')
+    qr.save(os.path.join(os.getcwd(), 'ressources', 'assets', 'qrcode.png'))
+    otp = pyotp.TOTP('base32secret3232')
     msg = MIMEMultipart()
     msg['From'] = 'cyu.otpdiploma@gmail.com'
     msg['To'] = to
     msg['Subject'] = 'Your OTP QRCODE'
-    with open(os.getcwd()+os.path.sep+'ressources'+os.path.sep+"assets"+os.path.sep+"qrcode.png", 'rb') as f:
+    with open(os.path.join(os.getcwd(), 'ressources', 'assets', 'qrcode.png'), 'rb') as f:
         img_data = f.read()
     image = MIMEImage(img_data, name="OTP.png")
     msg.attach(image)
@@ -31,11 +29,10 @@ def sendMail(to:string):
     return otp
 
 def verifyotp(token):
-    otp=pyotp.TOTP('base32secret3232')
+    otp = pyotp.TOTP('base32secret3232')
     return otp.verify(token)
 
 def maildiploma(diploma,to):
-    #La partie commenté correspond à l'envoie en format smime, cependant le destinataire doit possédé la signature, sinon le mail est illisible
     with open(diploma, 'rb') as f:
         img_data = f.read()
     message = MIMEMultipart()
@@ -44,14 +41,11 @@ def maildiploma(diploma,to):
     message['Subject'] = "Your diploma"
     image = MIMEImage(img_data, name="Diploma.png")
     message.attach(image)
-    #with open('cert/cert.pem', 'rb') as pem:
-        #message = smime.encrypt('\n'.join(message), pem.read())
     s = smtplib.SMTP("smtp.gmail.com",587)
     s.ehlo()
     s.starttls()
     s.ehlo()
     s.login('cyu.otpdiploma@gmail.com', 'admincyuniversite')
     s.sendmail(to, to, message.as_string())
-    #s.sendmail(to, to, message)
     s.quit()
 
