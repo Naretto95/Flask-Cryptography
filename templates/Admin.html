@@ -10,59 +10,63 @@
   {{success}}
 </div>
 {% endif %}
-<h1>Admin Panel</h1>
-<hr>
-<table class="table display table-striped table-bordered">
-  <thead>
-    <tr>
-      <th scope="col">User</th>
-      <th scope="col">Year</th>
-      <th scope="col">Specialisation</th>
-      <th scope="col">School</th>
-      <th scope="col">Validation</th>
-    </tr>
-  </thead>
-  <tbody>
-      {% for diploma in diplomas %}
-      {% if diploma.status==2 %}
-      <tr>
-          <td>{{diploma.user_link.first_name}} {{diploma.user_link.name}}</td>
-          <td>{{diploma.graduation_years}}</td>
-          <td>{{diploma.specialisation}}</td>
-          <td>{{current_user.school}}</td>
-          <td><form method="POST">
-                  <button type="button" class="btn btn-primary" name="accept" data-toggle="modal" data-target="#modal{{diploma._id}}" id="accept{{diploma._id}}">Accept</button>
-                  <button type="submit" class="btn btn-primary" name="refuse" value={{diploma._id}}>Refuse</button>
-                </form>
-                <form method="POST">
-                  <div class="modal fade" tabindex="-1" role="dialog" id="modal{{diploma._id}}">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">OTP Verification</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          <label >OTP:</label>
-                          <input type="text" class="form-control" id="otpverif"  name="otpverif" placeholder="Enter OTP">
-                          <br>
-                          <button type="button" class="btn btn-primary otp">Send OTP QRCODE (by mail)</button>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="submit" class="btn btn-primary" name="otp" value="{{diploma._id}}">Send</button>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <h1>Admin Panel</h1>
+    <hr>
+    <table class="table display table-striped table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">User</th>
+          <th scope="col">Year</th>
+          <th scope="col">Specialisation</th>
+          <th scope="col">School</th>
+          <th scope="col">Validation</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for diploma in diplomas %}
+          {% if diploma.status==2 %}
+          <tr>
+              <td>{{diploma.user_link.first_name}} {{diploma.user_link.name}}</td>
+              <td>{{diploma.graduation_years}}</td>
+              <td>{{diploma.specialisation}}</td>
+              <td>{{current_user.school}}</td>
+              <td><form method="POST">
+                      <button type="button" class="btn btn-primary" name="accept" data-toggle="modal" data-target="#modal{{diploma._id}}" id="accept{{diploma._id}}">Accept</button>
+                      <button type="submit" class="btn btn-primary" name="refuse" value={{diploma._id}}>Refuse</button>
+                    </form>
+                    <form method="POST">
+                      <div class="modal fade" tabindex="-1" role="dialog" id="modal{{diploma._id}}">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">OTP Verification</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <label >OTP:</label>
+                              <input type="text" class="form-control" id="otpverif"  name="otpverif" placeholder="Enter OTP">
+                              <br>
+                              <button type="button" class="btn btn-primary otp">Send OTP QRCODE (by mail)</button>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-primary" name="otp" value="{{diploma._id}}">Send</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-              </form></td>
-      </tr>
-      {% endif %}
-      {%endfor%}
-  </tbody>
-</table>
+                  </form></td>
+          </tr>
+          {% endif %}
+          {%endfor%}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
 {% block js%}
 <script type=text/javascript>

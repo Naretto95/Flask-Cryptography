@@ -10,50 +10,55 @@
   {{success}}
 </div>
 {% endif %}
-<h1>Diplomas</h1>
-<hr>
-<form method="POST">
-    <div class="form-group">
-            <label >Specialisation:</label>
-            <input type="text" class="form-control" id="specialisation"  name="specialisation" placeholder="Enter specialisation">
-    </div>
-    <div class="form-group">
-        <label >Graduation year:</label>
-        <input type="number" min="1900" max="2099" class="form-control" id="graduation_years"  name="graduation_years" placeholder="Enter graduation year">
-    </div>
-    <button type="submit" class="btn btn-primary" name="certif" value="certif">Submit</button>
-</form>
-<br>
-<br>
-<table class="table display table-striped table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">Specialisation</th>
-            <th scope="col">Year</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for diploma in diplomas %}
-            <tr>
-                <td>{{diploma.specialisation}}</td>
-                <td>{{diploma.graduation_years}}</td>
-                {%if diploma.status == 2 %}
-                <td>Waiting</td>
-                {%elif diploma.status == 0 %}
-                <td>Refused</td>
-                {%else%}
-                    <td><form method="POST">
-                      <button type="submit" class="btn btn-primary" name="download" value={{diploma._id}}>Download</button>
-                  </form>
-                  <br>
-                  <form method="POST">
-                    <button type="submit" class="btn btn-primary" name="mail" value={{diploma._id}}>Send by mail</button>
-                </form></td>
-                {%endif%}
-            </tr>
-            {%endfor%}
-        </tbody>
-      </table>
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <h1>Diplomas</h1>
+    <hr>
+    <form method="POST">
+        <div class="form-group">
+                <label >Specialisation:</label>
+                <input type="text" class="form-control" id="specialisation"  name="specialisation" placeholder="Enter specialisation">
+        </div>
+        <div class="form-group">
+            <label >Graduation year:</label>
+            <input type="number" min="1900" max="2099" class="form-control" id="graduation_years"  name="graduation_years" placeholder="Enter graduation year">
+        </div>
+        <button type="submit" class="btn btn-primary" name="certif" value="certif">Submit</button>
+    </form>
+    <br>
+    <hr>
+    <br>
+    <table class="table display table-striped table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Specialisation</th>
+                <th scope="col">Year</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for diploma in diplomas %}
+                <tr>
+                    <td>{{diploma.specialisation}}</td>
+                    <td>{{diploma.graduation_years}}</td>
+                    {%if diploma.status == 2 %}
+                    <td>Waiting</td>
+                    {%elif diploma.status == 0 %}
+                    <td>Refused</td>
+                    {%else%}
+                        <td><form method="POST">
+                          <button type="submit" class="btn btn-primary" name="download" value={{diploma._id}}>Download</button>
+                      </form>
+                      <br>
+                      <form method="POST">
+                        <button type="submit" class="btn btn-primary" name="mail" value={{diploma._id}}>Send by mail</button>
+                    </form></td>
+                    {%endif%}
+                </tr>
+                {%endfor%}
+            </tbody>
+    </table>
+  </div>
+</div>
 
 {% endblock%}

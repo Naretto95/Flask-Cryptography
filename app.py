@@ -85,7 +85,7 @@ def register():
 @login_required
 def diploma():
     diploma = True
-    if current_user.is_admin:
+    if check_admin(current_user.mail):
         return redirect('/admin')
     tab_diploma = user_diploma(current_user.id)
 
@@ -119,7 +119,7 @@ def diploma():
 @app.route("/admin",methods=['POST','GET'])
 @login_required
 def admin():
-    if not current_user.is_admin:
+    if not check_admin(current_user.mail):
         return redirect('/')
     warning = None
     success = None
@@ -149,7 +149,7 @@ def admin():
 @app.route("/otp/<mail>",methods=['POST','GET'])
 @login_required
 def otp(mail):
-    if current_user.is_admin and mail == current_user.mail:
+    if check_admin(current_user.mail) and mail == current_user.mail:
         sendMail(mail)
         return "OTP Sent !"
 
