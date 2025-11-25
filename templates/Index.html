@@ -1,28 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
-{% if warning %}
-<div class="alert alert-warning" role="alert">
-  {{warning}}
-</div>
-{% endif %}
-{% if success %}
-<div class="alert alert-success" role="alert">
-  {{success}}
-</div>
-{% endif %}
-<div class="card shadow mb-4">
-  <div class="card-body">
-    <h1>Check Certificate</h1>
-    <hr>
-    <br>
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group container p-3 my-3 border">
-            <label >Certificate:</label>
-            <input type="file" class="form-control" id="file"  name="file">
-            <br>
-            <button type="submit" class="btn btn-primary">Submit</button>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      {% if warning %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{warning}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endif %}
+      {% if success %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{success}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endif %}
+      <div class="card shadow-lg border-0 rounded-lg mt-5">
+        <div class="card-header text-center">
+          <h3 class="mb-0"><i class="fas fa-certificate"></i> Check Certificate</h3>
         </div>
-    </form>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="file" class="form-label"><i class="fas fa-upload"></i> Select Certificate File</label>
+              <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png,.gif" required>
+              <div class="form-text">Upload a certificate image to verify.</div>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-lg" style="background-color: #0E5484; border-color: #0E5484; color: white;"><i class="fas fa-search"></i> Verify Certificate</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

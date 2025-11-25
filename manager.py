@@ -1,8 +1,7 @@
 from flask import Flask
-from flask_login import UserMixin
+from flask_login import UserMixin, login_user, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask_login import login_user,LoginManager
 from flask_cors import CORS
 import os
 
@@ -69,7 +68,7 @@ class Diploma(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'first_name', 'password', 'email', 'is_admin', 'school')
+        fields = ('id', 'name', 'first_name', 'password', 'mail', 'admin', 'school')
 
 class DiplomaSchema(ma.Schema):
     class Meta:
@@ -84,7 +83,7 @@ def all_diplomas():
     return Diploma.query.all()
 
 def save_diploma(diploma):
-    new_diploma = Diploma(diploma['id_user'],diploma['graduation_years'],diploma['specialisation'],diploma['status'])
+    new_diploma = Diploma(diploma['user_id'], diploma['graduation_year'], diploma['specialization'], diploma['status'])
     db.session.add(new_diploma)
     db.session.commit()
 
@@ -116,9 +115,33 @@ def make_diploma(diploma_id):
     if not diploma:
         print("This diploma is not registered")
         return
-    
+
     user = User.query.filter_by(id=diploma.user_id).first()
-    data = f"{user.first_name},{user.name},{user.school},{diploma.specialisation},{diploma.graduation_years}"
+    data = f"{user.first_name},{user.name},{user.school},{diploma.specialization},{diploma.graduation_year}"
     return data
+
+
+def create_sample_users():
+    admin_data = {
+        'email': 'admin@example.com',
+        'name': 'Admin',
+        'first_name': 'Super',
+        'password': 'adminpass',
+        'school': 'CYTECH'
+    }
+    save_user(admin_data)
+    admin_user = User.query.filter_by(mail='admin@example.com').first()
+    admin_user.admin = True
+    db.session.commit()
+
+    user_data = {
+        'email': 'user@example.com',
+        'name': 'User',
+        'first_name': 'Normal',
+        'password': 'userpass',
+        'school': 'CYTECH'
+    }
+    save_user(user_data)
+
     
     

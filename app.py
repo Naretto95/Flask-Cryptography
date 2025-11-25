@@ -1,9 +1,7 @@
 import os
-from flask import  render_template,request, url_for
+from flask import render_template, request, url_for, send_file
 from flask_login import login_required, current_user, logout_user
-from werkzeug.utils import redirect
-from flask import send_file
-from werkzeug.utils import secure_filename
+from werkzeug.utils import redirect, secure_filename
 from src.crypt_function import decrypt_img, generate_unique_diploma
 from manager import *
 from src.totp import sendMail,verifyotp,maildiploma
@@ -90,12 +88,12 @@ def diploma():
     tab_diploma = user_diploma(current_user.id)
 
     if request.method == 'POST':
-        if "certif" in request.form:        
+        if "certif" in request.form:
             diploma = {}
-            diploma['id_user'] = current_user.id
-            diploma['specialisation'] = request.form['specialisation']
-            diploma['graduation_years'] = request.form['graduation_years']
-            diploma['status'] = 2 
+            diploma['user_id'] = current_user.id
+            diploma['specialization'] = request.form['specialisation']
+            diploma['graduation_year'] = request.form['graduation_years']
+            diploma['status'] = 2
             save_diploma(diploma)
             tab_diploma.append(diploma)
             return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, success="Diploma verification sent!")
@@ -103,15 +101,15 @@ def diploma():
         elif "download" in request.form:
             diplomaid = request.form["download"]
             diploma = Diploma.query.get(diplomaid)
-            if diploma._id_user == current_user.id:
-                return send_file(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma._id)+".png"), as_attachment=True)
+            if diploma.user_id == current_user.id:
+                return send_file(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma.id)+".png"), as_attachment=True)
             else:
                 return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, warning="Error!")
 
         elif "mail" in request.form:
             diplomaid = request.form["mail"]
             diploma = Diploma.query.get(diplomaid)
-            maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma._id)+".png"), current_user.mail)
+            maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma.id)+".png"), current_user.mail)
             return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, success="Mail sent to "+current_user.mail+"!")
     else:
         return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma)
@@ -130,11 +128,11 @@ def admin():
             if verifyotp(otpverif):
                 diploma = Diploma.query.get(otp)
                 diploma.status=1
-                user = User.query.get(diploma._id_user)
-                make_diploma(diploma._id)
+                user = User.query.get(diploma.user_id)
+                make_diploma(diploma.id)
                 generate_unique_diploma(user,diploma)
                 success = "Diploma validated !"
-                maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'],'diploma_'+str(diploma._id)+".png"),user.mail)
+                maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'],'diploma_'+str(diploma.id)+".png"),user.mail)
             else : 
                 warning = "Wrong OTP !"
         elif "refuse" in request.form:
@@ -154,5 +152,6 @@ def otp(mail):
         return "OTP Sent !"
 
 if __name__ == '__main__' :
-    db.create_all()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True,port = 8000)
