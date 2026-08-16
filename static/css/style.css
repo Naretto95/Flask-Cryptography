@@ -1,39 +1,38 @@
 /* =====================================================================
    CY Diploma — theme
-   Modern-academic palette layered on top of Bootstrap 5 via its CSS
-   custom properties, so every stock Bootstrap component (buttons,
-   badges, alerts, cards, tables...) re-skins automatically.
+   Single navy accent layered on top of Bootstrap 5 via its CSS custom
+   properties, so every stock Bootstrap component (buttons, badges,
+   alerts, cards, tables...) re-skins automatically. Kept deliberately
+   flat and simple: one accent color, no gradients, system fonts.
    ===================================================================== */
 
 :root {
     /* Brand palette */
-    --brand-navy: #10243e;
-    --brand-navy-rgb: 16, 36, 62;
-    --brand-navy-soft: #1e3a5f;
-    --brand-gold: #c9962c;
-    --brand-gold-rgb: 201, 150, 44;
-    --brand-paper: #f7f5f0;
-    --brand-ink: #223142;
+    --brand-navy: #105f94;
+    --brand-navy-rgb: 16, 95, 148;
+    --brand-navy-dark: #0c4a73;
+    --brand-navy-light: #2f7aa8;
+    --brand-bg: #f5f6f8;
+    --brand-ink: #212934;
 
     /* Fonts */
-    --font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
-    --font-body: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
     /* --- Bootstrap overrides -------------------------------------- */
     --bs-font-sans-serif: var(--font-body);
     --bs-body-font-family: var(--font-body);
-    --bs-body-bg: var(--brand-paper);
+    --bs-body-bg: var(--brand-bg);
     --bs-body-color: var(--brand-ink);
-    --bs-border-radius: 0.6rem;
-    --bs-border-radius-sm: 0.4rem;
-    --bs-border-radius-lg: 0.9rem;
-    --bs-border-radius-xl: 1.1rem;
+    --bs-border-radius: 0.5rem;
+    --bs-border-radius-sm: 0.35rem;
+    --bs-border-radius-lg: 0.65rem;
+    --bs-border-radius-xl: 0.85rem;
 
-    --bs-primary: var(--brand-navy-soft);
-    --bs-primary-rgb: 30, 58, 95;
-    --bs-primary-bg-subtle: #e2e8f1;
-    --bs-primary-border-subtle: #b9c6d9;
-    --bs-primary-text-emphasis: #13253d;
+    --bs-primary: var(--brand-navy);
+    --bs-primary-rgb: var(--brand-navy-rgb);
+    --bs-primary-bg-subtle: #e2edf3;
+    --bs-primary-border-subtle: #b7d0e0;
+    --bs-primary-text-emphasis: #0c4a73;
 
     --bs-secondary: #5b6b7c;
     --bs-secondary-rgb: 91, 107, 124;
@@ -47,17 +46,17 @@
     --bs-success-border-subtle: #b9dcc7;
     --bs-success-text-emphasis: #1e5138;
 
-    --bs-info: #2e7d8c;
-    --bs-info-rgb: 46, 125, 140;
-    --bs-info-bg-subtle: #dff0f2;
-    --bs-info-border-subtle: #b7dee3;
-    --bs-info-text-emphasis: #1d525c;
+    --bs-info: var(--brand-navy-light);
+    --bs-info-rgb: 47, 122, 168;
+    --bs-info-bg-subtle: #e2edf3;
+    --bs-info-border-subtle: #b7d0e0;
+    --bs-info-text-emphasis: #0c4a73;
 
-    --bs-warning: var(--brand-gold);
-    --bs-warning-rgb: var(--brand-gold-rgb);
-    --bs-warning-bg-subtle: #fbf0dc;
-    --bs-warning-border-subtle: #f0d9a6;
-    --bs-warning-text-emphasis: #6b4e14;
+    --bs-warning: #c2703d;
+    --bs-warning-rgb: 194, 112, 61;
+    --bs-warning-bg-subtle: #f5e6da;
+    --bs-warning-border-subtle: #e6c2a3;
+    --bs-warning-text-emphasis: #6e3f20;
 
     --bs-danger: #b3423a;
     --bs-danger-rgb: 179, 66, 58;
@@ -65,18 +64,18 @@
     --bs-danger-border-subtle: #e5b6b1;
     --bs-danger-text-emphasis: #6e2b25;
 
-    --bs-light: #fbfaf7;
-    --bs-light-rgb: 251, 250, 247;
-    --bs-dark: var(--brand-navy);
-    --bs-dark-rgb: var(--brand-navy-rgb);
+    --bs-light: #fafbfc;
+    --bs-light-rgb: 250, 251, 252;
+    --bs-dark: #1b2733;
+    --bs-dark-rgb: 27, 39, 51;
 
     --bs-link-color: var(--bs-primary);
-    --bs-link-hover-color: var(--brand-gold);
+    --bs-link-hover-color: var(--brand-navy-dark);
     --bs-link-color-rgb: var(--bs-primary-rgb);
-    --bs-link-hover-color-rgb: var(--brand-gold-rgb);
+    --bs-link-hover-color-rgb: 12, 74, 115;
     --bs-focus-ring-color: rgba(var(--bs-primary-rgb), 0.25);
 
-    --bs-card-border-color: rgba(var(--brand-navy-rgb), 0.08);
+    --bs-card-border-color: rgba(var(--brand-navy-rgb), 0.1);
 }
 
 html {
@@ -85,35 +84,25 @@ html {
 
 body {
     font-family: var(--font-body);
-    background: var(--brand-paper);
+    background: var(--brand-bg);
     color: var(--brand-ink);
 }
 
-h1, h2, h3, h4, h5, h6,
-.card-header,
-.brand-name {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-}
-
 p {
-    font-family: var(--font-body);
-    font-size: 1.05em;
-    font-weight: 400;
-    line-height: 1.7em;
+    font-size: 1.02em;
+    line-height: 1.65em;
 }
 
 a,
 a:hover,
 a:focus {
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .footer {
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(var(--brand-navy-rgb), 0.08);
-    color: #7c8a99;
+    border-top: 1px solid rgba(var(--brand-navy-rgb), 0.1);
+    color: #7a8794;
     font-size: 0.9em;
 }
 
@@ -122,12 +111,12 @@ a:focus {
 ----------------------------------------------------- */
 
 .navbar {
-    padding: 14px 10px;
+    padding: 12px 10px;
     background: #ffffff;
     border: none;
     border-radius: 0;
-    margin-bottom: 32px;
-    box-shadow: 0 2px 14px rgba(var(--brand-navy-rgb), 0.06);
+    margin-bottom: 28px;
+    box-shadow: 0 1px 0 rgba(var(--brand-navy-rgb), 0.08);
 }
 
 .btn-topbar {
@@ -141,7 +130,7 @@ a:focus {
 }
 
 .btn-topbar:hover {
-    background: var(--brand-navy-soft);
+    background: var(--brand-navy-dark);
     color: #fff;
 }
 
@@ -156,20 +145,20 @@ a:focus {
 }
 
 #sidebar {
-    min-width: 260px;
-    max-width: 260px;
-    background: linear-gradient(180deg, var(--brand-navy) 0%, #16324f 100%);
+    min-width: 250px;
+    max-width: 250px;
+    background: var(--brand-navy);
     color: #eef2f6;
     transition: all 0.3s;
 }
 
 #sidebar.active {
-    margin-left: -260px;
+    margin-left: -250px;
 }
 
 #sidebar .sidebar-header {
-    padding: 24px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 22px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .brand {
@@ -177,22 +166,24 @@ a:focus {
     align-items: center;
     gap: 12px;
     color: #fff;
+    text-decoration: none;
 }
 
 .brand:hover {
-    color: var(--brand-gold);
+    color: #fff;
+    text-decoration: none;
 }
 
 .brand-mark {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: rgba(var(--brand-gold-rgb), 0.18);
-    color: var(--brand-gold);
-    font-size: 1.15rem;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--bs-border-radius-sm);
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 1.05rem;
     flex-shrink: 0;
 }
 
@@ -203,24 +194,22 @@ a:focus {
 }
 
 .brand-name {
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: #fff;
 }
 
 .brand-tagline {
     font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #9fb0c3;
+    color: #bcd3e3;
 }
 
 .sidebar-user {
     text-align: center;
     padding: 12px 16px;
     font-size: 0.85em;
-    color: #c7d3e0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cfe0ec;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-user strong {
@@ -228,46 +217,43 @@ a:focus {
 }
 
 #sidebar ul.components {
-    padding: 14px 10px;
+    padding: 12px 10px;
 }
 
 #sidebar ul li a {
-    padding: 11px 14px;
+    padding: 10px 14px;
     font-size: 1em;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #c7d3e0;
+    color: #d6e5ee;
     border-radius: var(--bs-border-radius-sm);
-    border-left: 3px solid transparent;
     margin-bottom: 2px;
 }
 
 #sidebar ul li a i {
     width: 18px;
     text-align: center;
-    color: #7f93aa;
-    transition: color 0.2s ease;
+    color: #a9c6d9;
 }
 
 #sidebar ul li a:hover {
     color: #fff;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 #sidebar ul li a:hover i {
-    color: var(--brand-gold);
+    color: #fff;
 }
 
 #sidebar ul li.active > a {
-    color: #fff;
-    background: rgba(var(--brand-gold-rgb), 0.14);
-    border-left-color: var(--brand-gold);
+    color: var(--brand-navy);
+    background: #fff;
     font-weight: 600;
 }
 
 #sidebar ul li.active > a i {
-    color: var(--brand-gold);
+    color: var(--brand-navy);
 }
 
 /* ---------------------------------------------------
@@ -278,28 +264,35 @@ a:focus {
     width: 100%;
     padding: 20px;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     transition: all 0.3s;
+}
+
+#content > .container-fluid {
+    flex: 1 0 auto;
+}
+
+.footer {
+    flex-shrink: 0;
 }
 
 .card {
     border: 1px solid var(--bs-card-border-color);
-    box-shadow: 0 10px 30px -14px rgba(var(--brand-navy-rgb), 0.18);
+    box-shadow: 0 4px 16px rgba(var(--brand-navy-rgb), 0.06);
 }
 
 .card-header {
     background: #fff;
-    border-bottom: 1px solid rgba(var(--brand-navy-rgb), 0.08);
-    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid rgba(var(--brand-navy-rgb), 0.1);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
 }
 
-.card-header.bg-warning {
-    background: linear-gradient(135deg, #8a5a12, #c9962c) !important;
-    border-bottom: none;
-}
-
+.card-header.bg-warning,
 .card-header.bg-secondary {
-    background: linear-gradient(135deg, #334155, #5b6b7c) !important;
-    border-bottom: none;
+    background: #fff !important;
+    color: var(--brand-ink) !important;
 }
 
 .page-lead {
@@ -322,12 +315,89 @@ a:focus {
     border-radius: var(--bs-border-radius-sm);
 }
 
+/* Bootstrap's compiled .btn-* variants hardcode their own --bs-btn-*
+   custom properties rather than reading the root theme colors above, so
+   each solid/outline variant actually used in the app is re-themed here
+   explicitly. */
 .btn-primary {
-    --bs-btn-bg: var(--brand-navy-soft);
-    --bs-btn-border-color: var(--brand-navy-soft);
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--brand-navy);
+    --bs-btn-border-color: var(--brand-navy);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--brand-navy-dark);
+    --bs-btn-hover-border-color: var(--brand-navy-dark);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--brand-navy-dark);
+    --bs-btn-active-border-color: var(--brand-navy-dark);
+    --bs-btn-focus-shadow-rgb: var(--brand-navy-rgb);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--brand-navy);
+    --bs-btn-border-color: var(--brand-navy);
+    --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: var(--brand-navy);
     --bs-btn-hover-border-color: var(--brand-navy);
+    --bs-btn-active-color: #fff;
     --bs-btn-active-bg: var(--brand-navy);
+    --bs-btn-active-border-color: var(--brand-navy);
+    --bs-btn-focus-shadow-rgb: var(--brand-navy-rgb);
+}
+
+.btn-outline-info {
+    --bs-btn-color: var(--brand-navy-light);
+    --bs-btn-border-color: var(--brand-navy-light);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--brand-navy-light);
+    --bs-btn-hover-border-color: var(--brand-navy-light);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--brand-navy-light);
+    --bs-btn-active-border-color: var(--brand-navy-light);
+}
+
+.btn-success {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #2f7d5b;
+    --bs-btn-border-color: #2f7d5b;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #286a4d;
+    --bs-btn-hover-border-color: #286a4d;
+    --bs-btn-active-bg: #286a4d;
+    --bs-btn-active-border-color: #286a4d;
+}
+
+.btn-danger {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #b3423a;
+    --bs-btn-border-color: #b3423a;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #983831;
+    --bs-btn-hover-border-color: #983831;
+    --bs-btn-active-bg: #983831;
+    --bs-btn-active-border-color: #983831;
+}
+
+.btn-warning {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #c2703d;
+    --bs-btn-border-color: #c2703d;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #a55f34;
+    --bs-btn-hover-border-color: #a55f34;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #a55f34;
+    --bs-btn-active-border-color: #a55f34;
+}
+
+.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #5b6b7c;
+    --bs-btn-border-color: #5b6b7c;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #4d5b69;
+    --bs-btn-hover-border-color: #4d5b69;
+    --bs-btn-active-bg: #4d5b69;
+    --bs-btn-active-border-color: #4d5b69;
 }
 
 input[type="file"].form-control::file-selector-button {
@@ -341,7 +411,7 @@ input[type="file"].form-control::file-selector-button {
 }
 
 input[type="file"].form-control::file-selector-button:hover {
-    background: var(--brand-navy);
+    background: var(--brand-navy-dark);
 }
 
 /* ---------------------------------------------------
@@ -354,7 +424,6 @@ input[type="file"].form-control::file-selector-button:hover {
 
 .badge {
     font-weight: 600;
-    letter-spacing: 0.02em;
     padding: 0.4em 0.7em;
 }
 
@@ -364,7 +433,7 @@ input[type="file"].form-control::file-selector-button:hover {
 
 @media (max-width: 768px) {
     #sidebar {
-        margin-left: -260px;
+        margin-left: -250px;
     }
     #sidebar.active {
         margin-left: 0;
@@ -385,7 +454,7 @@ input[type="file"].form-control::file-selector-button:hover {
 }
 
 .link:hover {
-    color: var(--brand-gold);
+    color: var(--brand-navy-dark);
     text-decoration: underline;
 }
 

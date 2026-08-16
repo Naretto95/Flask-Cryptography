@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import date
 from flask import render_template, request, url_for, send_file
 from flask_login import login_required, current_user, logout_user
 from werkzeug.utils import redirect, secure_filename
@@ -23,6 +24,10 @@ def diploma_image_path(diploma_id):
 
 def redirect_after_login(mail):
     return redirect('/admin') if check_admin(mail) else redirect('/diplomas')
+
+@app.context_processor
+def inject_current_year():
+    return {'current_year': date.today().year}
 
 @app.route("/", methods=['GET', 'POST'])
 def home():

@@ -1,101 +1,142 @@
-#par lilian naretto et corentin Javaud
+#!/usr/bin/env python3
+"""Caesar and Vigenere cipher cryptanalysis toolkit.
+
+An interactive command-line tool for breaking classic substitution
+ciphers: brute-forcing a Caesar shift, recovering a Caesar shift via
+letter-frequency analysis, and recovering a Vigenere key (by brute
+force over key lengths, or for a known key length) using the same
+frequency-analysis technique on each key position independently.
+
+Originally written by Lilian Naretto and Corentin Javaud.
+"""
+from __future__ import annotations
+
 import string
-import operator
-phrase = input("phrase à décrypter : ")
-print("1) caesar brute force")
-print("2) caesar analyse de féquence")
-print("3) Vigenere brute force")
-print("4) Vigenere, sachant la taille de clé (13)")
-option = input("methode de decryption :")
 
-def cesar(chaine,decalage): # script encryptant avec la methode de cesar
-    resultat=""
-    chaine=chaine.upper()
-    for lettre in chaine:
-        if lettre in string.ascii_uppercase:
-                resultat=resultat+string.ascii_uppercase[(string.ascii_uppercase.index(lettre)+decalage)%len(string.ascii_uppercase)]
-        else:
-            resultat+=lettre
-    return resultat
+ALPHABET = string.ascii_uppercase
+ALPHABET_SIZE = len(ALPHABET)
 
-def bruteforce(phrasee): #permet de decrypte en brute force, affiche les solutions possibles, a l'utilisateur d'analyser
-    resultat=""
-    i=25
-    phrasee=phrasee.upper()
-    while i >= 0:
-        for lettre in phrasee:
-            if lettre in string.ascii_uppercase:
-                resultat=resultat+string.ascii_uppercase[(string.ascii_uppercase.index(lettre)+1)%len(string.ascii_uppercase)]
-            else:
-                resultat+=lettre
-        print("clé = "+str(i)+" resultat="+resultat)
-        i-=1
-        phrasee=resultat
-        resultat=""
+# Reference letter frequencies (per mille) used to score a decryption
+# candidate against natural-language text. Only the peaks that matter
+# for scoring are populated (E and A dominate both French and English);
+# every other letter is left at zero. This is a lightweight heuristic,
+# not a complete frequency table.
+FRENCH_FREQUENCIES = (
+    900, 0, 0, 0, 1500, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+)
+ENGLISH_FREQUENCIES = (
+    900, 0, 0, 0, 1500, 0, 0, 0, 800, 0, 0, 300, 300,
+    700, 500, 0, 0, 0, 700, 600, 200, 0, 0, 0, 0, 0,
+)
 
-def frequences(chaine): #permet d'obtenir les fréquences pour chaque lettre dans une phrase
-    freq = [0] * 26
-    for lettre in chaine:
-        if lettre in string.ascii_uppercase:
-            freq[string.ascii_uppercase.index(lettre)] += 1
-    somme=sum(freq)
-    i=0
-    for nb in freq:
-        freq[i] = nb / somme
-        i+=1
-    return freq
 
-def analysis(chaine): #permet de comparer les frequences des lettres de la phrase et la frequence des lettres A et E dans les mots français, les 0 correspondent aux autres lettres, on cherche surtout les A et E
-    francais = [900, 0, 0, 0, 1500,0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    correction = [0] * 26 
-    for decalage in range(26):
-        resultat = frequences(cesar(chaine, decalage))
-        for freq, dic in zip(resultat,francais) :
-            correction[decalage]+= freq*dic
-    print("clé = " + str(26-correction.index(max(correction))) + " phrase décrypté : "+ cesar(chaine,correction.index(max(correction))))
+def caesar_shift(text: str, shift: int) -> str:
+    """Shift every letter in `text` forward by `shift` positions in the
+    alphabet (a negative shift moves backward). Non-letters pass through
+    unchanged."""
+    text = text.upper()
+    return "".join(
+        ALPHABET[(ALPHABET.index(char) + shift) % ALPHABET_SIZE] if char in ALPHABET else char
+        for char in text
+    )
 
-def clecesar(chaine): #un peu comme au dessus, mais avec un tableu de frequence anglais
-    anglais = [900, 0, 0, 0, 1500,0, 0, 0, 800, 0, 0, 300, 300, 700, 500,0, 0, 0, 700, 600, 200, 0, 0, 0, 0, 0]
-    correction = [0] * 26 
-    for decalage in range(26):
-        resultat = frequences(cesar(chaine, decalage))
-        for freq, dic in zip(resultat,anglais) :
-            correction[decalage]+= freq*dic
-    return 26-correction.index(max(correction))
 
-def vigenere(chaine, n) : # utilise la methode de decryption cesar sur vigenere, on itère juste la methode
-    resultat=""
-    for i in range(n):
-        resultat+=chr(65+ clecesar(chaine[i::n]))
-    return resultat
+def letter_frequencies(text: str) -> list[float]:
+    """Return the relative frequency of each letter A-Z in `text`."""
+    counts = [0] * ALPHABET_SIZE
+    for char in text:
+        if char in ALPHABET:
+            counts[ALPHABET.index(char)] += 1
+    total = sum(counts) or 1
+    return [count / total for count in counts]
 
-def dechiffrevigenere(chaine, cle):
-    taillecle = len(cle)
-    i=0
-    tabcle=[0]*taillecle
-    tabchaine=[0]*len(chaine)
-    for lettre in cle:
-        tabcle[i]= ord(lettre)
-        i+=1
-    i=0
-    for lettre in chaine:
-        tabchaine[i]=ord(lettre)
-        i+=1
-    resultat = ''
-    for i in range(len(tabchaine)):
-        valeur = (tabchaine[i] - tabcle[i % taillecle]) % 26
-        resultat += chr(valeur + 65)
-    return resultat
 
-if option == "1":
-    bruteforce(phrase)
-if option == "2":
-    analysis(phrase)
-if option == "3":
-    phrase = phrase.replace(" ","")
-    for i in range(1,20):
-        print(vigenere(phrase,i))
-if option == "4":
-    phrase = phrase.replace(" ","")
-    cle=vigenere(phrase,13)
-    print("clé = "+cle +" resultat = "+dechiffrevigenere(phrase,cle))
+def best_caesar_shift(ciphertext: str, reference_frequencies: tuple[int, ...]) -> int:
+    """Find the Caesar shift that, when applied to `ciphertext`, best
+    matches `reference_frequencies` (highest dot-product score). The
+    returned shift can be passed straight to `caesar_shift` to decrypt."""
+    scores = []
+    for shift in range(ALPHABET_SIZE):
+        candidate_frequencies = letter_frequencies(caesar_shift(ciphertext, shift))
+        score = sum(freq * ref for freq, ref in zip(candidate_frequencies, reference_frequencies))
+        scores.append(score)
+    return scores.index(max(scores))
+
+
+def caesar_brute_force(ciphertext: str) -> None:
+    """Print every possible Caesar shift so a human can pick the one that
+    reads as plaintext."""
+    for shift in range(ALPHABET_SIZE):
+        print(f"shift = {shift:>2}  {caesar_shift(ciphertext, shift)}")
+
+
+def caesar_frequency_analysis(ciphertext: str, reference_frequencies: tuple[int, ...] = FRENCH_FREQUENCIES) -> None:
+    """Guess the Caesar shift via frequency analysis and print the result."""
+    shift = best_caesar_shift(ciphertext, reference_frequencies)
+    print(f"shift = {shift}  plaintext = {caesar_shift(ciphertext, shift)}")
+
+
+def vigenere_key_from_length(
+    ciphertext: str,
+    key_length: int,
+    reference_frequencies: tuple[int, ...] = ENGLISH_FREQUENCIES,
+) -> str:
+    """Recover a Vigenere key of a known length. Each key position behaves
+    like an independent Caesar cipher across the letters it encrypted, so
+    every column `ciphertext[offset::key_length]` is solved on its own via
+    frequency analysis."""
+    key_chars = []
+    for offset in range(key_length):
+        column = ciphertext[offset::key_length]
+        decrypt_shift = best_caesar_shift(column, reference_frequencies)
+        encrypt_shift = (ALPHABET_SIZE - decrypt_shift) % ALPHABET_SIZE
+        key_chars.append(ALPHABET[encrypt_shift])
+    return "".join(key_chars)
+
+
+def vigenere_decrypt(ciphertext: str, key: str) -> str:
+    """Decrypt a Vigenere ciphertext with a known key. Non-letters pass
+    through unchanged and don't consume a key position."""
+    key = key.upper()
+    ciphertext = ciphertext.upper()
+    decrypted_chars = []
+    key_index = 0
+    for char in ciphertext:
+        if char not in ALPHABET:
+            decrypted_chars.append(char)
+            continue
+        key_shift = ALPHABET.index(key[key_index % len(key)])
+        decrypted_chars.append(ALPHABET[(ALPHABET.index(char) - key_shift) % ALPHABET_SIZE])
+        key_index += 1
+    return "".join(decrypted_chars)
+
+
+def main() -> None:
+    ciphertext = input("Phrase to decrypt: ").replace(" ", "")
+    print(
+        "1) Caesar brute force\n"
+        "2) Caesar frequency analysis\n"
+        "3) Vigenere brute force (unknown key length, tries 1-20)\n"
+        "4) Vigenere with a known key length"
+    )
+    choice = input("Method: ").strip()
+
+    if choice == "1":
+        caesar_brute_force(ciphertext)
+    elif choice == "2":
+        caesar_frequency_analysis(ciphertext)
+    elif choice == "3":
+        for key_length in range(1, 21):
+            key = vigenere_key_from_length(ciphertext, key_length)
+            print(f"key length = {key_length:>2}  key = {key}  plaintext = {vigenere_decrypt(ciphertext, key)}")
+    elif choice == "4":
+        key_length = int(input("Key length: "))
+        key = vigenere_key_from_length(ciphertext, key_length)
+        print(f"key = {key}  plaintext = {vigenere_decrypt(ciphertext, key)}")
+    else:
+        print(f"Unknown option: {choice!r}")
+
+
+if __name__ == "__main__":
+    main()
