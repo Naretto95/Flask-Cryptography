@@ -4,7 +4,7 @@ from datetime import date
 from flask import render_template, request, url_for, send_file
 from flask_login import login_required, current_user, logout_user
 from werkzeug.utils import redirect, secure_filename
-from src.crypt_function import decrypt_img, generate_unique_diploma
+from src.crypt_function import decrypt_img, generate_unique_diploma, InvalidCertificate
 from manager import *
 from src.totp import sendMail,verifyotp,maildiploma
 
@@ -37,8 +37,12 @@ def home():
             filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
             file_path = os.path.join(basedir, app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            code = decrypt_img(file_path)
-            os.remove(file_path)
+            try:
+                code = decrypt_img(file_path)
+            except InvalidCertificate as e:
+                return render_template('Index.html', warning=str(e))
+            finally:
+                os.remove(file_path)
             return render_template('Index.html', success=f"QRCODE : {code[0]} STENO : {code[1]}")
         return render_template('Index.html', warning="File not found / Wrong type of file !")
     return render_template('Index.html')
