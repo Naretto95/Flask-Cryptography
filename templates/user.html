@@ -5,19 +5,13 @@
   {{warning}}
 </div>
 {% endif %}
-<br>
-<h1>Diplomas</h1>
-<hr>
-{% if warning %}
-<div class="alert alert-warning" role="alert">
-  {{warning}}
-</div>
-{% endif %}
 {% if success %}
 <div class="alert alert-success" role="alert">
   {{success}}
 </div>
 {% endif %}
+<h1>Diplomas</h1>
+<hr>
 <form method="POST">
     <div class="form-group">
             <label >Specialisation:</label>
@@ -30,8 +24,9 @@
     <button type="submit" class="btn btn-primary" name="certif" value="certif">Submit</button>
 </form>
 <br>
-<table class="table table-striped table-bordered">
-        <thead class="thead-light">
+<br>
+<table class="table display table-striped table-bordered">
+        <thead>
           <tr>
             <th scope="col">Specialisation</th>
             <th scope="col">Year</th>
@@ -40,7 +35,6 @@
         </thead>
         <tbody>
             {% for diploma in diplomas %}
-            <div>
             <tr>
                 <td>{{diploma.specialisation}}</td>
                 <td>{{diploma.graduation_years}}</td>

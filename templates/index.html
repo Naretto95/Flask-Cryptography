@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<br>
 {% if warning %}
 <div class="alert alert-warning" role="alert">
   {{warning}}
@@ -12,18 +11,16 @@
 </div>
 {% endif %}
 <div>
-    {% if current_user.is_authenticated %}
-    <h1>Hi {{ current_user.name }}!</h1>
-    {% endif %}
-    <br>
     <h1>Check Certificate</h1>
     <hr>
+    <br>
     <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-                <label >Certificate:</label>
-                <input type="file" class="form-control" id="file"  name="file">
+        <div class="form-group container p-3 my-3 border">
+            <label >Certificate:</label>
+            <input type="file" class="form-control" id="file"  name="file">
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 {% endblock %}

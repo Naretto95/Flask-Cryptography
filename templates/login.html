@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<br>
-<h1>Login</h1>
-<hr>
 {% if warning %}
 <div class="alert alert-warning" role="alert">
   {{warning}}
 </div>
 {% endif %}
+<h1>Login</h1>
+<hr>
 <form action="/login" method="POST">
   <div class="form-group">
     <div class="form-group">
