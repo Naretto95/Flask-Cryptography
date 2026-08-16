@@ -18,9 +18,14 @@ os.makedirs(os.path.join(basedir, app.config['SEND_FOLDER']), exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def diploma_image_path(diploma_id):
+    return os.path.join(basedir, app.config['SEND_FOLDER'], f"diploma_{diploma_id}.png")
+
+def redirect_after_login(mail):
+    return redirect('/admin') if check_admin(mail) else redirect('/diplomas')
+
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    home = True
     if request.method == 'POST':
         file = request.files.get('file')
         if file and allowed_file(file.filename):
@@ -29,10 +34,9 @@ def home():
             file.save(file_path)
             code = decrypt_img(file_path)
             os.remove(file_path)
-            return render_template('Index.html', home=home, success=f"QRCODE : {code[0]} STENO : {code[1]}")
-        else:
-            return render_template('Index.html', home=home, warning="File not found / Wrong type of file !")
-    return render_template('Index.html', home=home)
+            return render_template('Index.html', success=f"QRCODE : {code[0]} STENO : {code[1]}")
+        return render_template('Index.html', warning="File not found / Wrong type of file !")
+    return render_template('Index.html')
 
 @app.route('/logout')
 @login_required
@@ -44,118 +48,110 @@ def logout():
 def login():
     if current_user.is_authenticated:
         return redirect('/')
-    if request.method == 'POST':
-        mail = request.form['email']
-        password = request.form['password']
-        check = authenticate(mail,password)
-        if check[0]:
-            if check_admin(mail):
-                return redirect('/admin')
-            else:
-                return redirect('/diplomas')
-        else:
-            return render_template('Login.html', warning="Incorrect password/email combination !")
-    return render_template('Login.html', login=True)
+    if request.method != 'POST':
+        return render_template('Login.html')
+
+    mail = request.form['email']
+    password = request.form['password']
+    authenticated, _ = authenticate(mail, password)
+    if not authenticated:
+        return render_template('Login.html', warning="Incorrect password/email combination !")
+    return redirect_after_login(mail)
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
     if current_user.is_authenticated:
         return redirect('/')
-    elif request.method == 'POST':
-        email = request.form['email']
-        if is_email_available(email):
-            user = {
-                'email': email,
-                'name': request.form['lname'],
-                'first_name': request.form['fname'],
-                'password': request.form['password'],
-                'school': request.form['school'] if request.form['school'] in ["CYTECH", "EISTI"] else "CYTECH"
-            }
-            save_user(user)
-            check = authenticate(user['email'], user['password'])
-            if check[0] and check_admin(user['email']):
-                return redirect('/admin')
-            else:
-                return redirect('/diplomas')
-        else:
-            return render_template('Register.html', register=True, warning="This email already exists!")
-    else:
-        return render_template('Register.html', register=True)
+    if request.method != 'POST':
+        return render_template('Register.html')
+
+    email = request.form['email']
+    if not is_email_available(email):
+        return render_template('Register.html', warning="This email already exists!")
+
+    user = {
+        'email': email,
+        'name': request.form['lname'],
+        'first_name': request.form['fname'],
+        'password': request.form['password'],
+        'school': request.form['school'] if request.form['school'] in ["CYTECH", "EISTI"] else "CYTECH"
+    }
+    save_user(user)
+    authenticate(user['email'], user['password'])
+    return redirect_after_login(user['email'])
 
 @app.route("/diplomas", methods=['POST', 'GET'])
 @login_required
 def diploma():
-    diploma = True
     if check_admin(current_user.mail):
         return redirect('/admin')
     tab_diploma = user_diploma(current_user.id)
 
-    if request.method == 'POST':
-        if "certif" in request.form:
-            diploma = {}
-            diploma['user_id'] = current_user.id
-            diploma['specialization'] = request.form['specialization']
-            diploma['graduation_year'] = request.form['graduation_year']
-            diploma['status'] = 2
-            save_diploma(diploma)
-            tab_diploma.append(diploma)
-            return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, success="Diploma verification sent!")
+    if request.method != 'POST':
+        return render_template('User.html', diplomas=tab_diploma)
 
-        elif "download" in request.form:
-            diplomaid = request.form["download"]
-            diploma = Diploma.query.get(diplomaid)
-            if diploma and diploma.user_id == current_user.id:
-                return send_file(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma.id)+".png"), as_attachment=True)
-            else:
-                return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, warning="Error!")
+    if "certif" in request.form:
+        new_diploma = {
+            'user_id': current_user.id,
+            'specialization': request.form['specialization'],
+            'graduation_year': request.form['graduation_year'],
+            'status': 2,
+        }
+        save_diploma(new_diploma)
+        tab_diploma.append(new_diploma)
+        return render_template('User.html', diplomas=tab_diploma, success="Diploma verification sent!")
 
-        elif "mail" in request.form:
-            diplomaid = request.form["mail"]
-            diploma = Diploma.query.get(diplomaid)
-            if diploma and diploma.user_id == current_user.id:
-                maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'], 'diploma_'+str(diploma.id)+".png"), current_user.mail)
-                return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, success="Mail sent to "+current_user.mail+"!")
-            else:
-                return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma, warning="Error!")
-    else:
-        return render_template('/User.html', diplomas=tab_diploma, n=len(tab_diploma), diploma=diploma)
+    if "download" in request.form:
+        target = Diploma.query.get(request.form["download"])
+        if target and target.user_id == current_user.id:
+            return send_file(diploma_image_path(target.id), as_attachment=True)
+        return render_template('User.html', diplomas=tab_diploma, warning="Error!")
+
+    if "mail" in request.form:
+        target = Diploma.query.get(request.form["mail"])
+        if target and target.user_id == current_user.id:
+            maildiploma(diploma_image_path(target.id), current_user.mail)
+            return render_template('User.html', diplomas=tab_diploma, success=f"Mail sent to {current_user.mail}!")
+        return render_template('User.html', diplomas=tab_diploma, warning="Error!")
+
+    return render_template('User.html', diplomas=tab_diploma)
 
 @app.route("/admin",methods=['POST','GET'])
 @login_required
 def admin():
     if not check_admin(current_user.mail):
         return redirect('/')
+
     warning = None
     success = None
     if request.method == 'POST':
         if "otp" in request.form:
-            otpverif = request.form["otpverif"]
-            otp = request.form["otp"]
-            diploma = Diploma.query.get(otp)
-            if diploma and verifyotp(otpverif):
-                diploma.status=1
-                user = User.query.get(diploma.user_id)
-                generate_unique_diploma(user,diploma)
+            target = Diploma.query.get(request.form["otp"])
+            if target and verifyotp(request.form["otpverif"]):
+                target.status = 1
+                user = User.query.get(target.user_id)
+                generate_unique_diploma(user, target)
+                maildiploma(diploma_image_path(target.id), user.mail)
                 success = "Diploma validated !"
-                maildiploma(os.path.join(basedir, app.config['SEND_FOLDER'],'diploma_'+str(diploma.id)+".png"),user.mail)
-            else :
+            else:
                 warning = "Wrong OTP !"
         elif "refuse" in request.form:
-            refuse = request.form["refuse"]
-            diploma = Diploma.query.get(refuse)
-            if diploma:
-                diploma.status=0
+            target = Diploma.query.get(request.form["refuse"])
+            if target:
+                target.status = 0
                 warning = "Diploma refused !"
-    db.session.commit()
+        db.session.commit()
+
     tab_diploma = all_diplomas()
-    return render_template('Admin.html', diplomas=tab_diploma, n=len(tab_diploma), admin=True, warning=warning, success=success)
+    return render_template('Admin.html', diplomas=tab_diploma, warning=warning, success=success)
 
 @app.route("/otp",methods=['POST','GET'])
 @login_required
 def otp():
-    if check_admin(current_user.mail):
-        sendMail(current_user.mail)
-        return "OTP Sent !"
+    if not check_admin(current_user.mail):
+        return "Forbidden", 403
+    sendMail(current_user.mail)
+    return "OTP Sent !"
 
 if __name__ == '__main__' :
     with app.app_context():
