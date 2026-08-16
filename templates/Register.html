@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
 {% block content %}
 <div class="container">
   <div class="row justify-content-center">
@@ -21,6 +21,7 @@
         </div>
         <div class="card-body">
           <form action="/register" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-floating mb-3">
@@ -51,7 +52,7 @@
               <label for="school"><i class="fas fa-school"></i> School</label>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-blue btn-lg"><i class="fas fa-user-plus"></i> Register</button>
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-user-plus"></i> Register</button>
             </div>
           </form>
         </div>

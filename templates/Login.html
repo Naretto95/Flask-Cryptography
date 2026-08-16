@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
 {% block content %}
 <div class="container">
   <div class="row justify-content-center">
@@ -15,6 +15,7 @@
         </div>
         <div class="card-body">
           <form action="/login" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-floating mb-3">
               <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
               <label for="email"><i class="fas fa-envelope"></i> Email</label>
@@ -24,7 +25,7 @@
               <label for="password"><i class="fas fa-lock"></i> Password</label>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-blue btn-lg"><i class="fas fa-sign-in-alt"></i> Login</button>
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-sign-in-alt"></i> Login</button>
             </div>
           </form>
         </div>

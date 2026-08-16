@@ -6,11 +6,11 @@ from email.mime.image import MIMEImage
 import qrcode
 
 # Constants
-TOTP_SECRET = 'base32secret3232'
-EMAIL_FROM = 'cyu.otpdiploma@gmail.com'
-EMAIL_PASSWORD = 'admincyuniversite'
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
+TOTP_SECRET = os.environ.get('TOTP_SECRET', 'base32secret3232')
+EMAIL_FROM = os.environ.get('EMAIL_FROM', 'cyu.otpdiploma@gmail.com')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
+SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 QR_PATH = os.path.join('ressources', 'assets', 'qrcode.png')
 
 def sendMail(to: str):

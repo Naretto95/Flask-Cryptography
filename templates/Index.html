@@ -1,8 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
 {% block content %}
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8">
+      <div class="text-center mb-4 mt-4">
+        <h1 class="h3">Verify a Diploma</h1>
+        <p class="page-lead mb-0">Upload a diploma image to confirm its signature and read back the details sealed inside it.</p>
+      </div>
       {% if warning %}
       <div class="alert alert-warning alert-dismissible fade show" role="alert">
         {{warning}}
@@ -15,19 +19,20 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
       {% endif %}
-      <div class="card shadow-lg border-0 rounded-lg mt-5">
+      <div class="card shadow-lg border-0 rounded-lg">
         <div class="card-header text-center">
           <h3 class="mb-0"><i class="fas fa-certificate"></i> Check Certificate</h3>
         </div>
         <div class="card-body">
           <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
               <label for="file" class="form-label"><i class="fas fa-upload"></i> Select Certificate File</label>
               <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png,.gif" required>
               <div class="form-text">Upload a certificate image to verify.</div>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-blue btn-lg"><i class="fas fa-search"></i> Verify Certificate</button>
+              <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-search"></i> Verify Certificate</button>
             </div>
           </form>
         </div>

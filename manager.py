@@ -1,26 +1,27 @@
 from flask import Flask
 from flask_login import UserMixin, login_user, LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_cors import CORS
+from flask_wtf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 app = Flask(__name__)
-cors = CORS(app, resources={r'/*': {"origins":"*"}})
 
 SEND_FOLDER = os.path.join('ressources', 'Diplomas')
 UPLOAD_FOLDER = os.path.join('ressources', 'DL_Diplomas')
 app.config['SEND_FOLDER'] = SEND_FOLDER
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_db.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///crypto_db.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = "Keep breathing. That's the key.Breathe "
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-insecure-key-change-me')
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 db = SQLAlchemy(app)
-ma = Marshmallow(app)
+csrf = CSRFProtect(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -51,7 +52,7 @@ class Diploma(db.Model):
     user = db.relationship("User")
     graduation_year = db.Column(db.String(8))
     specialization = db.Column(db.String(255))
-    status = db.Column(db.Integer)  # 0: validated, 1: rejected, 2: pending
+    status = db.Column(db.Integer)  # 0: refused, 1: approved, 2: pending
     hash = db.Column(db.String(255))
 
     def __init__(self, user_id, graduation_year, specialization, status):
@@ -66,16 +67,9 @@ class Diploma(db.Model):
     def get_hash(self):
         return self.hash
 
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'name', 'first_name', 'password', 'mail', 'admin', 'school')
-
-class DiplomaSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'user_id', 'graduation_year', 'specialization', 'status')
-
 def save_user(user):
-    new_user = User(user['name'],user["first_name"],user['password'],user['email'],user['school'],False)
+    hashed_password = generate_password_hash(user['password'])
+    new_user = User(user['name'],user["first_name"],hashed_password,user['email'],user['school'],False)
     db.session.add(new_user)
     db.session.commit()
 
@@ -87,21 +81,16 @@ def save_diploma(diploma):
     db.session.add(new_diploma)
     db.session.commit()
 
-def search_user(id_user):
-    return User.query.filter_by(id=id_user).first()
-
-def checksum(mail, password):
+def authenticate(mail, password):
+    """Checks credentials and, on success, logs the user in (flask_login side effect)."""
     user = User.query.filter_by(mail=mail).first()
-    if user:
-        if password == user.password:
-            login_user(user)
-            return (True, user.id)
-        else:
-            return (False, 0)
+    if user and check_password_hash(user.password, password):
+        login_user(user)
+        return (True, user.id)
     else:
         return (False, 0)
 
-def check_user(mail):
+def is_email_available(mail):
     return not bool(User.query.filter_by(mail=mail).first())
 
 def check_admin(mail):
@@ -109,16 +98,6 @@ def check_admin(mail):
 
 def user_diploma(user_id):
     return Diploma.query.filter_by(user_id=user_id).all()
-
-def make_diploma(diploma_id):
-    diploma = Diploma.query.filter_by(id=diploma_id).first()
-    if not diploma:
-        print("This diploma is not registered")
-        return
-
-    user = User.query.filter_by(id=diploma.user_id).first()
-    data = f"{user.first_name},{user.name},{user.school},{diploma.specialization},{diploma.graduation_year}"
-    return data
 
 
 def create_sample_users():
@@ -142,6 +121,3 @@ def create_sample_users():
         'school': 'CYTECH'
     }
     save_user(user_data)
-
-    
-    

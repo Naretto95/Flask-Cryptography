@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
 {% block content %}
 <div class="container-fluid">
   {% if warning %}
@@ -39,6 +39,7 @@
               <td>{{diploma.user.school}}</td>
               <td>
                 <form method="POST" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modal{{diploma.id}}"><i class="fas fa-check"></i> Accept</button>
                   <button type="submit" class="btn btn-sm btn-danger ms-1" name="refuse" value="{{diploma.id}}"><i class="fas fa-times"></i> Refuse</button>
                 </form>
@@ -50,6 +51,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                       </div>
                       <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="modal-body">
                           <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="otpverif" name="otpverif" placeholder="Enter OTP" required>
@@ -81,7 +83,7 @@
   $(function() {
     $('.otp').on('click', function(e) {
       e.preventDefault()
-      $.getJSON('/otp/{{current_user.mail}}',
+      $.getJSON('/otp',
           function(data) {
         //do nothing
       });

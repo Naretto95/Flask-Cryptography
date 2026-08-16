@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
 {% block content %}
 <div class="container-fluid">
   {% if warning %}
@@ -21,6 +21,7 @@
         </div>
         <div class="card-body">
           <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-floating mb-3">
               <input type="text" class="form-control" id="specialization" name="specialization" placeholder="Enter specialization" required>
               <label for="specialization"><i class="fas fa-graduation-cap"></i> Specialization</label>
@@ -67,9 +68,11 @@
                   <td><span class="badge bg-success">Approved</span></td>
                   <td>
                     <form method="POST" class="d-inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                       <button type="submit" class="btn btn-sm btn-outline-primary" name="download" value="{{diploma.id}}"><i class="fas fa-download"></i> Download</button>
                     </form>
                     <form method="POST" class="d-inline ms-1">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                       <button type="submit" class="btn btn-sm btn-outline-info" name="mail" value="{{diploma.id}}"><i class="fas fa-envelope"></i> Email</button>
                     </form>
                   </td>
